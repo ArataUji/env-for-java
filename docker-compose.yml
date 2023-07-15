@@ -1,0 +1,53 @@
+version: '3.5'
+services:
+
+  tomcat:
+    container_name: tomcat
+    build:
+      context: .
+      dockerfile: ./ap_server/Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./project
+        target: /opt/project
+    environment:
+      TZ: "Asia/Tokyo"
+    tty: true
+    networks:
+      mynetwork:
+        ipv4_address: 172.25.0.2
+
+  mysql:
+    container_name: mysql
+    build:
+      context: .
+      dockerfile: ./db_server/Dockerfile
+    ports:
+      - "3306:3306"
+    volumes:
+      - type: volume
+        source: dbdata
+        target: /etc/mysql
+        volume:
+          nocopy: true
+    environment:
+      TZ: "Asia/Tokyo"
+      MYSQL_ROOT_PASSWORD: 12345
+      MYSQL_DATABASE: testdb
+    tty: true
+    networks:
+      mynetwork:
+        ipv4_address: 172.25.0.3
+
+volumes:
+  dbdata:
+
+networks:
+  mynetwork:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.25.0.0/24

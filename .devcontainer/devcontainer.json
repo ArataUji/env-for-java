@@ -1,0 +1,28 @@
+{
+  // 任意の名前でOK。
+  "name": "project",
+
+  // コンテナを作成するためのdocker-compose.ymlを指定。
+  "dockerComposeFile": [
+        "../docker-compose.yml"
+  ],
+
+  // docker-compose.ymlのservicesと合わせる
+  "service": "tomcat",
+
+  // port転送設定。
+  "forwardPorts": [8080],
+
+  // コンテナログインした際のカレントディレクトリ指定。
+  "workspaceFolder": "/opt/project",
+
+  // コンテナが生成されたときに、コンテナ側にインストールするVSCodeの拡張機能。
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "vscjava.vscode-java-pack",
+        "cweijan.vscode-mysql-client2"
+      ]
+    }
+  }
+}
