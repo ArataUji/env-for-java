@@ -1,6 +1,6 @@
 {
   // 任意の名前でOK。
-  "name": "project",
+  "name": "projects",
 
   // コンテナを作成するためのdocker-compose.ymlを指定。
   "dockerComposeFile": [
@@ -14,13 +14,14 @@
   "forwardPorts": [8080],
 
   // コンテナログインした際のカレントディレクトリ指定。
-  "workspaceFolder": "/opt/project",
+  "workspaceFolder": "/opt/projects",
 
   // コンテナが生成されたときに、コンテナ側にインストールするVSCodeの拡張機能。
   "customizations": {
     "vscode": {
       "extensions": [
         "vscjava.vscode-java-pack",
+        "pthorsson.vscode-jsp",
         "cweijan.vscode-mysql-client2"
       ]
     }
