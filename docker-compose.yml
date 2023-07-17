@@ -10,14 +10,14 @@ services:
       - "8080:8080"
     volumes:
       - type: bind
-        source: ./project
-        target: /opt/project
+        source: ./projects
+        target: /opt/projects
     environment:
       TZ: "Asia/Tokyo"
     tty: true
     networks:
       mynetwork:
-        ipv4_address: 172.25.0.2
+        ipv4_address: 192.168.0.2
 
   mysql:
     container_name: mysql
@@ -29,7 +29,7 @@ services:
     volumes:
       - type: volume
         source: dbdata
-        target: /etc/mysql
+        target: /var/lib/mysql
         volume:
           nocopy: true
     environment:
@@ -39,7 +39,7 @@ services:
     tty: true
     networks:
       mynetwork:
-        ipv4_address: 172.25.0.3
+        ipv4_address: 192.168.0.3
 
 volumes:
   dbdata:
@@ -50,4 +50,4 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: 172.25.0.0/24
+        - subnet: 192.168.0.0/24
