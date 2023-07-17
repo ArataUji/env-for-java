@@ -33,7 +33,7 @@ VSCodeとコンテナを接続し、コンテナ内で直接ファイル編集�
 ### 資材ダウンロード
 GitHubからenv-for-javaをダウンロードします。「<> Code」のボタンから「Download ZIP」をクリックして、ダウンロード・展開してください。展開したフォルダを任意の場所に配置します。
 
-以上が完了したら、展開フォルダ直下に「project」というフォルダを作成します。構成は以下のようになると思います。
+以上が完了したら、展開フォルダ直下に「projects」というフォルダを作成します。構成は以下のようになります。
 ```
 env-for-java
 .
@@ -49,11 +49,11 @@ env-for-java
 │   ├── Dockerfile
 │   └── my.cnf
 ├── docker-compose.yml
-└── project
+└── projects
 ```
-ローカルの「project」フォルダがコンテナの「/opt/project」にバインドされ、コンテナが停止した後でもここでの変更はローカルに引き継がれます。
+Web3層アーキテクチャのうち、プレゼンテーション層とアプリケーション層をap_server（Tomcat）コンテナが、データベース層をdb_server（MySQL）コンテナが役割を担う構成としています。
 
-Web3層アーキテクチャのうち、プレゼンテーション層とAP層をap_server（Tomcat）コンテナが、DB層をdb_server（MySQL）コンテナが役割を担う構成としています。
+ローカルの「projects」フォルダがコンテナの「/opt/projects」にバインドされ、コンテナが停止した後でもここでの変更はローカルに引き継がれます。また、拡張機能とMySQLのデータ部のボリュームが作られているため、コンテナを停止または削除しても、再起動時にデータが引き継がれます。
 
 ネットワークの定義は「docker-compose.yml」を確認してください。コンテナ内に入るソフトウェア・ツールはDockerfileで定義されています。ソフトウェア・ツールの追加・削除・変更をしたい場合はDockerfileを編集してください。
 
@@ -68,20 +68,22 @@ VSCodeのウィンドウの一番左下に「><」のようなボタンがある
 
 Javaアプリケーションを作成、テスト、デバッグするのに人気な拡張機能のコレクションです。
 
+- Java Server Pages (JSP)
+
+JSPファイルを見やすくするための拡張機能です。非推奨となっていますが、問題なく機能しています。
+
 - MySQL(Weijan Chen)
 
 MySQLをGUIで操作できる拡張機能です。
 
 >**Warning**
->コンテナ起動後に拡張機能が自動インストールされない事象が何度か確認されています。もしそうなってしまった場合は、コンテナとイメージを削除して起動し直してみてください。コンテナとイメージの削除はDockerのCLIの他に、デスクトップアプリのGUIからでも簡単にできます。
-
->アプリのウィンドウ右上の歯車アイコンからの「Resources」の設定で、メモリの割り当て上限を増やすことでこの問題が改善する場合があります。
-
+>コンテナ起動後に拡張機能が自動インストールされない、インストールが完了しない、インストールされても拡張機能が使えない・有効化されない、といった事象が何度か確認されています。もしそうなってしまった場合は、コンテナから一旦接続を切り、再接続（再起動）をしてみてください。
+>Dockerデスクトップアプリのウィンドウ右上の歯車アイコンからの「Resources」の設定で、メモリの割り当て上限を増やすことでこの問題が改善する場合があります。
 
 ## Mavenプロジェクト立ち上げとHello World
 これ以降はあくまで一例として参照してください。
 ### Mavenプロジェクト立ち上げ＆各種設定
-左サイドバー内で右クリックをし「Create Maven Project」をして「project」内にMavenプロジェクトを作ります。「maven-arhetype-webapp」→「1.4」→「デフォルトのグループID（com.example）」→「デフォルトのアーティファクトID（demo）」を選択・入力して作成します。
+左サイドバー内で右クリックをし「Create Maven Project」をして「projects」内にMavenプロジェクトを作ります。「maven-arhetype-webapp」→「1.4」→「デフォルトのグループID（com.example）」→「デフォルトのアーティファクトID（demo）」を選択・入力して作成します。
 
 pom.xmlの各種設定を変更します。pom.xmlはMavenプロジェクトの依存関係を定義しているファイルです。
 デフォルトのイメージはJDK11を採用しているのでmaven.compiler.sourceとmaven.compiler.targetを11に変更します。
@@ -92,7 +94,7 @@ pom.xmlの各種設定を変更します。pom.xmlはMavenプロジェクトの�
   <maven.compiler.target>11</maven.compiler.target>
 </properties>
 ```
-dependenciesタグの中にサーブレットとJSPとJDBCドライバを利用するための記述を追加します。
+dependenciesタグの中にサーブレット、JSPとJDBCドライバを利用するための記述を追加します。
 ```
 <dependency>
   <groupId>javax.servlet</groupId>
@@ -110,7 +112,7 @@ dependenciesタグの中にサーブレットとJSPとJDBCドライバを利用�
   <version>8.0.33</version>
 </dependency>
 ```
-pluginsタグの中にtomcat9のプラグインの定義の記述を追加します。
+pluginsタグの中にtomcat9のプラグインの記述を追加します。
 ```
 <plugin>
   <groupId>org.opoo.maven</groupId>
@@ -133,21 +135,21 @@ pluginsタグの中にtomcat9のプラグインの定義の記述を追加しま
 次にウィンドウ下方のパネルのターミナルで以下の操作をします。
 
 ```
-/opt/project# cd demo
-/opt/project/demo# mvn tomcat9:deploy
+/opt/projects# cd demo
+/opt/projects/demo# mvn tomcat9:deploy
 ```
 Mavenプロジェクトのルートディレクトリに移動し、Tomcatにデプロイしています。デプロイが成功したら、[http://localhost:8080/demo/](http://localhost:8080/demo/)にアクセスします。「Hello World!」と表示されていれば成功です。
 
-## DB接続
-アクティビティバーのデータベースのアイコンをクリックします。+ボタンから接続するデータベースの情報を入力していきます。以下に必要な情報をまとめています。
+## データベース接続
+拡張機能を使ってMySQLを操作します。アクティビティバーのデータベースのアイコンをクリックします。+ボタンから接続するデータベースの情報を入力していきます。以下に必要な情報をまとめています。
 
 |  要素  |  値  |
 | ---- | ---- |
 |  Server Type  |  MySQL  |
-|  Host  |  172.25.0.3  |
+|  Host  |  192.168.0.3  |
 |  Port  |  3306  |
 |  Username  |  root  |
 |  Password  |  12345  |
 |  Database  |  testdb  |
 
-入力が完了したら、「+ Connect」ボタンで接続してください。接続に成功したら、DBをGUIで操作できます。
+入力が完了したら、「+ Connect」ボタンで接続してください。接続に成功したら、データベースをGUIで操作できます。
