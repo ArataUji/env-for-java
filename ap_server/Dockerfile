@@ -1,6 +1,6 @@
 FROM tomcat:9.0.73-jdk11
 
-RUN mkdir /opt/project &&\
+RUN mkdir /opt/projects &&\
     apt update &&\
     apt -y install maven &&\
     apt -y install mysql-client-8.0 &&\
