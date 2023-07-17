@@ -1,8 +1,5 @@
-# tomcat:9.0.73-openjdk11のイメージを利用。任意のバージョンでOK。
 FROM tomcat:9.0.73-jdk11
 
-# ローカルのソースコードをマウントするためのディレクトリを作成。
-# mavenとmysql-clientをインストールしておく。
 RUN mkdir /opt/project &&\
     apt update &&\
     apt -y install maven &&\
